@@ -1,0 +1,54 @@
+@startuml GameLoopManager Class 
+    class GameLoopManager <<MonoBehaviour>>{
+        - isHaveToLoading : bool 
+        - nextScene : E_SceneName 
+        - currentState : E_LoopState 
+        - sceneLoader : SceneLoader
+        - << SerializeField >> loadingUIObject : GameObject  
+        - << Zenject.Inject >> sceneObjectUpdataer : I_SceneObjectUpdatable
+
+        - Start() : void
+        - Update() : void
+        - activeIsHaveToLoading() : void
+    }
+
+    Enum E_LoopState {
+        Init
+        Update
+        Loading
+    }
+
+    Enum E_SceneName {
+        TitleScene
+        ……
+    }
+
+    class SceneLoader{
+        - AsyncOperation asyncLoad;
+        - Slider loadingSlider;
+        - float currentTime;
+        - const float loadingDilay;
+
+        + SceneLoader(GameObject loadingSliderObject)
+        + LoadScene(E_SeneName sceneName) : IEnumerator 
+    }
+
+    interface I_SceneObjectUpdatable{
+        + InitObject() : I_SceneLoadAlertable 
+        + UpdateObject() : void 
+        + ReleaseObject() : void 
+        + StartGame() : void 
+    }
+
+    interface I_SceneLoadAlertable{
+        + ObserveSceneLoadAlert ( Action<E_SceneName> action ) : void
+    }
+
+    GameLoopManager --> I_SceneLoadAlertable : Observe
+    GameLoopManager *--> I_SceneObjectUpdatable : Update
+    GameLoopManager *-left-> SceneLoader
+    GameLoopManager +-up- E_LoopState
+    I_SceneObjectUpdatable -right-> I_SceneLoadAlertable : Init
+
+
+@enduml

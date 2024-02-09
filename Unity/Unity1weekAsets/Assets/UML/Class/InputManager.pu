@@ -1,0 +1,56 @@
+@startuml InputManager
+    class InputManager{
+        + const float maxValidFrameCount
+        - List< InputData > inputList
+        - List< InputData > inputBuffer
+        
+        + InputManager()
+        + InputData[] GetInputList()
+        + InputData[] GetInputBuffer()
+        + void UpdateInput()
+        + void SetInputData()
+    }
+
+    abstract class InputMode <<MonoBehaviour>>{
+        # bool isActive;
+        # Dictionary < E_InputType , bool> isHoldDic;
+        # [SerializeField] readonly E_GameMode ownMode;
+        # [Inject] I_InputDataAddable inputManager;
+        
+        # [Inject] virtual void InitInput (I_GameModeChangeAlertable gameManager)
+        # virtual void changeGameMopde(E_GameMode nextMode)
+    }
+
+    
+    class InputData{
+        + E_InputType type
+        + float frameCount
+        + InputData (E_InputType type)
+    }
+
+    abstract class SceneObjectUpdateManager{
+        - [Zenject.Inject] I_InputUpdatable inputManager
+        - [Zenject.Inject] GameManager gameManager
+
+        + void InitObject()
+        + void UpdateObject()
+        + void ReleaseObject()
+    }
+
+    interface I_InputDataAddable{
+        + abstract InputManager()
+        + abstract InputData[] GetInputList()
+        + abstract InputData[] GetInputBuffer()
+    }
+
+    interface I_InputDataUpdatable{
+        + abstract void SetInputData()
+    }
+
+    InputManager -left-|> I_InputDataAddable
+    InputManager -right-|> I_InputDataUpdatable
+    InputManager o-- InputData
+
+    InputMode *-up-> I_InputDataAddable : Zenject.Inject AsSingle
+    SceneObjectUpdateManager *-up-> I_InputDataUpdatable : Zenject.Inject AsSingle
+@enduml

@@ -1,0 +1,11 @@
+@startuml GameModeChange
+
+    class GameModeManager{
+
+    }
+
+    Enum E_GameMode{
+        
+    }
+
+@enduml
