@@ -45,10 +45,15 @@
     }
 
     GameLoopManager --> I_SceneLoadAlertable : Observe
-    GameLoopManager *--> I_SceneObjectUpdatable : Update
+    GameLoopManager *--> I_SceneObjectUpdatable : UpdateObject , InitObject
+
+    note "I_SceneLoadAlertable を返す\nManagerはStart内で監視開始" as N1
+    GameLoopManager <.. N1
+    N1 .left. I_SceneObjectUpdatable
+
     GameLoopManager *-left-> SceneLoader
     GameLoopManager +-up- E_LoopState
-    I_SceneObjectUpdatable -right-> I_SceneLoadAlertable : Init
+    I_SceneObjectUpdatable -left-> I_SceneLoadAlertable : Init 生成
 
 
 @enduml

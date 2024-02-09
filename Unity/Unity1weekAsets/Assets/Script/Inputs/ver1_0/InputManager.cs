@@ -2,8 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using My1WeekGameSystems_ver1;
 
-namespace My1WeekGameSystems_ver1{
+namespace MyInputManager_ver1{
+    
     public class InputManager : I_InputDataAddable , I_InputUpdatable {
 
         public const float maxValidFrameCount = 6.0f * 1.0f / 60.0f;

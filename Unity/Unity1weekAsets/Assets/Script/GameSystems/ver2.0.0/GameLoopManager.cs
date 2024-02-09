@@ -67,7 +67,7 @@ namespace My1WeekGameSystems_ver2{
                     //不要なオブジェクトを開放する
                     sceneObjectUpdataer.ReleaseObject();
 
-                    //読み込みを開始する
+                    //読み込みを開始する(コルーチン)
                     StartCoroutine(sceneLoader.LoadScene(nextScene));
 
                     //読み込みを開始したのでフラグをfalseに

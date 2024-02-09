@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Zenject;
+using MyInputManager_ver1;
 
 namespace My1WeekGameSystems_ver1{
     public abstract class SceneObjectUpdateManager{

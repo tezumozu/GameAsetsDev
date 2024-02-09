@@ -1,6 +1,7 @@
 using UnityEngine;
 using Zenject;
 using My1WeekGameSystems_ver1;
+using MyInputManager_ver1;
 
 public class TestSceneGameSystemInstaller : MonoInstaller {
     public override void InstallBindings() {
