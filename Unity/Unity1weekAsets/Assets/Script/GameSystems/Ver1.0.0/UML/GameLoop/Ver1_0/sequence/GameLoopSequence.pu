@@ -1,0 +1,65 @@
+@startuml ゲームループ
+
+    
+== Start ==
+
+    Unity --> GameLoopManager : start()
+    activate GameLoopManager
+
+    GameLoopManager --> GameLoopManager : Call UniTask And GetTasks
+    group UniTask 
+        GameLoopManager --> SceneObjectUpdater :initObject
+        activate SceneObjectUpdater
+        SceneObjectUpdater --> SceneObjectUpdater : init GameObjects
+    end
+    deactivate SceneObjectUpdater
+
+    note over GameLoopManager : Taskの終了を待たず次の処理へ
+    GameLoopManager --> I_SceneChangeAlatable : Observe
+    activate I_SceneChangeAlatable
+    I_SceneChangeAlatable --> GameLoopManager
+    deactivate I_SceneChangeAlatable
+
+
+    GameLoopManager --> Unity :return
+    deactivate GameLoopManager
+
+== Update ==
+
+    Unity --> GameLoopManager : Update
+
+    group UpdateLoop [case State Init]
+        
+        GameLoopManager --> GameLoopManager : check Init Task Finished
+        activate GameLoopManager
+        note over GameLoopManager : 初期化が終了したら
+        GameLoopManager --> GameLoopManager : change State [Update]
+        deactivate GameLoopManager
+
+    else case State Update
+        GameLoopManager --> SceneObjectUpdater : UpdateObject
+        group loop [GameObject]
+            group UniTask
+                SceneObjectUpdater --> SceneObjectUpdater : GameObjects Update
+                note over SceneObjectUpdater : もしシーン変更が必要になったら
+                SceneObjectUpdater --> I_SceneChangeAlatable : SceneChange Alert
+                I_SceneChangeAlatable --> GameLoopManager : OnNext (通知) 
+                GameLoopManager --> SceneObjectUpdater
+            end
+        end
+        note over SceneObjectUpdater : 各オブジェクト処理の終了を待つ
+        SceneObjectUpdater --> GameLoopManager
+        note over GameLoopManager : シーン変更が必要なら
+        GameLoopManager --> SceneLoader : LoadScene
+        group AsycLoad
+            SceneLoader --> SceneLoader : LoadScene
+        end
+        SceneLoader --> GameLoopManager
+        GameLoopManager --> GameLoopManager : change State [Loading]
+    else case State Loading
+        GameLoopManager --> GameLoopManager : Wait
+
+    end
+    GameLoopManager --> Unity
+
+@enduml

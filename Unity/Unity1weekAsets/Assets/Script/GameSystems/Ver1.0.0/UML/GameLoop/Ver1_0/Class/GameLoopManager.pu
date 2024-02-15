@@ -55,67 +55,74 @@
         + abstract void ObserveGameModeChange(Action<E_GameMode> action)
     }
 
-    class InputManager{
-        + const float maxValidFrameCount
-        - List< InputData > inputList
-        - List< InputData > inputBuffer
+    
+    
+
+    namespace InputManagers{
+        abstract class InputMode<<MonoBehaviour>>{
+            # bool isActive;
+            # Dictionary < E_InputType , bool> isHoldDic;
+            # [SerializeField] readonly E_GameMode ownMode;
+            # [Inject] I_InputDataAddable inputManager;
+            
+            # [Inject] virtual void InitInput (I_GameModeChangeAlertable gameManager)
+            # virtual void changeGameMopde(E_GameMode nextMode)
+        }
+
+        interface I_InputDataUpdatable{
+            + abstract void SetInputData()
+        }
         
-        + InputManager()
-        + InputData[] GetInputList()
-        + InputData[] GetInputBuffer()
-        + void UpdateInput()
-        + void SetInputData()
-    }
+        /'class InputManager{
+            + const float maxValidFrameCount
+            - List< InputData > inputList
+            - List< InputData > inputBuffer
+            
+            + InputManager()
+            + InputData[] GetInputList()
+            + InputData[] GetInputBuffer()
+            + void UpdateInput()
+            + void SetInputData()
+        }
 
-
-    abstract class InputMode<<MonoBehaviour>>{
-        # bool isActive;
-        # Dictionary < E_InputType , bool> isHoldDic;
-        # [SerializeField] readonly E_GameMode ownMode;
-        # [Inject] I_InputDataAddable inputManager;
         
-        # [Inject] virtual void InitInput (I_GameModeChangeAlertable gameManager)
-        # virtual void changeGameMopde(E_GameMode nextMode)
+
+        class InputData{
+            + E_InputType type
+            + float frameCount
+            + InputData (E_InputType type)
+        }
+
+
+        interface I_InputDataAddable{
+            + abstract InputManager()
+            + abstract InputData[] GetInputList()
+            + abstract InputData[] GetInputBuffer()
+        }
+        '/
     }
 
 
-    class InputData{
-        + E_InputType type
-        + float frameCount
-        + InputData (E_InputType type)
-    }
+    GameLoopManager -up-> I_SceneLoadAlertable : Observe
+    GameLoopManager *-right-> SceneObjectUpdateManager
+    GameLoopManager *-down-> SceneLoader
 
-
-    interface I_InputDataAddable{
-        + abstract InputManager()
-        + abstract InputData[] GetInputList()
-        + abstract InputData[] GetInputBuffer()
-    }
-
-
-    interface I_InputDataUpdatable{
-        + abstract void SetInputData()
-    }
-
-
-    GameLoopManager -right-> I_SceneLoadAlertable : Observe
-    GameLoopManager *--> SceneObjectUpdateManager
-    GameLoopManager *-left-> SceneLoader
-
-    GameManager -up-|> I_SceneLoadAlertable
+    GameManager -left-|> I_SceneLoadAlertable
     GameManager --|> I_GameModeChangeAlertable
 
     InputMode -up-> I_GameModeChangeAlertable : Observe
-    InputMode *-left-> I_InputDataAddable : Zenject.Inject AsSingle
 
-    SceneObjectUpdateManager *-right-> GameManager : Zenject.Inject AsSingle
-    SceneObjectUpdateManager *-left-> I_InputDataUpdatable : Zenject.Inject AsSingle
+    SceneObjectUpdateManager *-left-> GameManager : Zenject.Inject AsSingle
+    SceneObjectUpdateManager *--> I_InputDataUpdatable : Zenject.Inject AsSingle
 
-    E_LoopState --+ GameLoopManager
+    E_LoopState -up-+ GameLoopManager
 
+
+    /'
     InputManager --|> I_InputDataAddable
     InputManager -up-|> I_InputDataUpdatable
     InputManager o-left- InputData
-
+    InputMode *-left-> I_InputDataAddable : Zenject.Inject AsSingle
+    '/
     
 @enduml
