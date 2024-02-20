@@ -1,0 +1,44 @@
+@startuml
+==AddInput==
+Unity --> InputMode :Input
+activate InputMode
+InputMode --> InputMode : create InputData
+InputMode --> InputManager : Add Data
+deactivate InputMode
+activate InputManager
+InputManager --> InputManager : Add Data List And Buffer
+InputManager --> InputMode : return
+deactivate InputManager
+activate InputMode
+InputMode --> Unity : return
+deactivate InputMode
+
+==UpdateInput==
+Unity --> GameManager : Update
+activate GameManager
+GameManager --> InputManager : UpdateInput
+deactivate GameManager
+activate InputManager
+InputManager --> InputManager : Frame Count Up List and Buffer
+InputManager --> InputManager : Remove Data over MaxFrame
+InputManager --> GameManager : return
+deactivate InputManager
+activate GameManager
+GameManager --> Unity : return
+deactivate GameManager
+
+==GetInput==
+Unity --> GameManager : Update
+activate GameManager
+GameManager --> InputManager : GetInput
+deactivate GameManager
+activate InputManager
+InputManager --> InputManager : Copy List To Data
+InputManager --> InputManager : Remove List Elements
+InputManager --> GameManager : retuen Data
+deactivate InputManager
+activate GameManager
+GameManager --> GameManager : Update Object
+GameManager --> Unity : return
+deactivate GameManager
+@enduml
