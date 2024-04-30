@@ -1,0 +1,97 @@
+@startuml class
+
+    abstract class GameLoopManager <<MonoBehaviour>>{
+        - [SerializeField] loadingUIObject
+        - [Inject] I_ObjectUpdatable objectUpdater
+        - SceneLooder sceneLoder
+        - E_GameLoopState currentState
+        - E_SceneName NextScene
+
+        - [Inject] void InjectInit(I_SceneLoadNoticable)
+        - void Start()
+        - void Update()
+        - void activeIsHaveToLoading( E_SceneName )
+
+    }
+
+    enum E_GameLoopState{
+        Init
+        Update
+        Loading
+    }
+
+    enum E_SceneName{
+        TitleScene
+        ...
+    }
+
+    enum E_SceneGameState{
+        State1
+        State2
+    }
+
+    abstract class GameManager< T > <<Where T : Enum>>{
+        + void InitObject()
+        + void StartGame()
+        + void ReleaseObject()
+    }
+
+    interface I_GameStateUpdatable< T > <<Where T : Enum>>{
+        + IObservable<T> UpdateStateAsync {get;}
+        + IObservable<bool> PauseAsync {get;}
+    }
+
+    interface I_SceneLoadNoticable{
+        + IObservable<E_SceneName> LoadSceneAsync {get;}
+    }
+
+    interface I_ObjectUpdatable{
+        + void InitObject()
+        + void UpdateObject()
+        + void StartGame()
+        + void ReleaseObject()
+    }
+
+    class ObjectUpdater {
+        -[Inject] GameManager<E_SceneGameState>
+        + void InitObject()
+        + void UpdateObject()
+        + void StartGame()
+        + void ReleaseObject()
+    }
+
+    class Manager
+    class GameObject <<MonoBehaviour>> {
+        - [InJect] InitObject(I_GameStateUpdatable<E_SceneGameState>)
+    }
+
+
+    class SceneLooder{
+        - AsyncOperation asyncLoad
+        - LoadingUIManager uiManager
+        - float currentTime
+        - readonly float loadingDilay = 1.0f
+
+        + SceneLooder(LoadingUIManager)
+        + IEnumerator LoadScene(E_SceneName sceneName)
+    }
+
+
+    GameLoopManager *--> I_ObjectUpdatable
+    GameLoopManager -left-> I_SceneLoadNoticable
+    GameLoopManager *-right-> SceneLooder : Inject
+
+    GameManager -up-|> I_SceneLoadNoticable
+    GameManager --> I_GameStateUpdatable
+
+    ObjectUpdater -right-|> I_ObjectUpdatable
+    ObjectUpdater *-left-> GameManager
+    ObjectUpdater --> Manager :Init and Inject 
+
+    Manager -left-> I_GameStateUpdatable : Observe
+    GameObject -up-> I_GameStateUpdatable : Observe
+
+    E_GameLoopState --+ GameLoopManager
+
+
+@enduml
