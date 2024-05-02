@@ -52,8 +52,8 @@ public abstract class MonoSingleton<T> : MonoBehaviour where T : MonoSingleton<T
         }
 
         //すでにインスタンスがある場合
-        else if( m_Instance != instance )
-        {
+        else if( m_Instance != instance ){
+            
             DestroyImmediate( instance.gameObject );
         }
     }
@@ -74,7 +74,7 @@ public abstract class MonoSingleton<T> : MonoBehaviour where T : MonoSingleton<T
 
     //各子オブジェクトの破壊時処理
     protected virtual void OnFinalize() {}
- 
+
     void Awake()
     {
         Initialize( this as T );

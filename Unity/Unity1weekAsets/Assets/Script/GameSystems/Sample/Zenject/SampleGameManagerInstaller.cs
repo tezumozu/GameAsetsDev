@@ -23,6 +23,11 @@ public class SampleGameManagerInstaller : MonoInstaller{
             .To<SampleGameManager>()
             .FromInstance(gameManager);
 
+        Container
+            .Bind<I_Pausable>()
+            .To<SampleGameManager>()
+            .FromInstance(gameManager);
+
 
         //ObjectUpdater
         Container

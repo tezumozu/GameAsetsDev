@@ -31,18 +31,33 @@
     }
 
     abstract class GameManager< T > <<Where T : Enum>>{
+
+        # T currentState
+
+        # Subject<T> UpdateStateSubject
+        # Subject<bool> PauseSubject
+        # Subject<E_SceneName> SceneLoadSubject
+
+        + IObservable<T> UpdateStateAsync { get }
+        + IObservable<bool> PauseAsync { get }
+        + IObservable<E_SceneName> SceneLoadAsync { get } 
+
         + void InitObject()
         + void StartGame()
         + void ReleaseObject()
     }
 
     interface I_GameStateUpdatable< T > <<Where T : Enum>>{
-        + IObservable<T> UpdateStateAsync {get;}
-        + IObservable<bool> PauseAsync {get;}
+        + IObservable<T> UpdateStateAsync {get}
+        + IObservable<bool> PauseAsync {get}
+    }
+
+    interface I_Pausable{
+        + IObservable<bool> PauseAsync {get}
     }
 
     interface I_SceneLoadNoticable{
-        + IObservable<E_SceneName> LoadSceneAsync {get;}
+        + IObservable<E_SceneName> LoadSceneAsync {get}
     }
 
     interface I_ObjectUpdatable{
@@ -76,20 +91,40 @@
         + IEnumerator LoadScene(E_SceneName sceneName)
     }
 
+    class CoroutineHander<< Singleton MonoBehaviour >>{
+        - static Dictionary<IEnumerator,Coroutine> ActiveCoroutinDic
+        - static Subject<IEnumerator> FinishCoroutinSubject
 
-    GameLoopManager *--> I_ObjectUpdatable
-    GameLoopManager -left-> I_SceneLoadNoticable
-    GameLoopManager *-right-> SceneLooder : Inject
+        # override void OnInitialize()
+        - [Inject] void UpdateSceneInjection()
+
+        + static Coroutine OrderStartCoroutine(IEnumerator coroutine)
+        + static void OrderStopCoroutine(IEnumerator target)
+        + static void ReStartCoroutine(IEnumerator target)
+
+        - static void StopAllActiveCoroutine()
+        - static void ReStartAllActiveCoroutine()
+        - static IEnumerator CheckFinishCoroutine(IEnumerator coroutine)
+    }
+
+
+    GameLoopManager *--> I_ObjectUpdatable : Update
+    GameLoopManager -left-> I_SceneLoadNoticable : Observe
+    GameLoopManager *-right-> SceneLooder : Inject and Load
 
     GameManager -up-|> I_SceneLoadNoticable
-    GameManager --> I_GameStateUpdatable
+    GameManager --|> I_GameStateUpdatable 
 
     ObjectUpdater -right-|> I_ObjectUpdatable
-    ObjectUpdater *-left-> GameManager
+    ObjectUpdater *-left-> GameManager : Init
     ObjectUpdater --> Manager :Init and Inject 
 
+    I_Pausable <|-up- I_GameStateUpdatable
+    CoroutineHander -left-> I_Pausable : Observe
+
     Manager -left-> I_GameStateUpdatable : Observe
-    GameObject -up-> I_GameStateUpdatable : Observe
+    Manager --> CoroutineHander : OrderStartCoroutine
+    GameObject -right-> I_GameStateUpdatable : Observe
 
     E_GameLoopState --+ GameLoopManager
 
