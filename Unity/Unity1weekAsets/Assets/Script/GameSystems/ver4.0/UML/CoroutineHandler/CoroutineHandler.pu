@@ -1,0 +1,35 @@
+@startuml CoroutineHanderClass
+
+class CoroutineHandler {
+
+    - static Dictionary< IEnumerator , bool > activeCoroutinDic
+    - static Dictionary< IEnumerator , Coroutine > checkerCoroutineDic
+
+    - [Inject] void UpdateSceneInjection ( I_SceneLoadNoticable sceneloadAsync )
+    # override void OnInitalize()
+
+    - static IEnumerator CheckFinishCoroutine(IEnumerator coroutine)
+
+    + static void OrderStartCoroutine ( IEnumerator coroutine )
+    + static void OrderStopCoroutine ( IEnumerator coroutine )
+    + static void OrderKillCoroutine ( IEnumerator coroutine )
+    + static bool isFinishCoroutine ( IEnumerator coroutine )
+
+}
+
+
+interface I_SceneLoadNoticable{
+    + IObservable<E_SceneName> SceneLoadAsync { get; }
+}
+
+
+enum E_SceneName{
+    Sample
+}
+
+
+CoroutineHandler --> I_SceneLoadNoticable
+E_SceneName <-left- CoroutineHandler
+E_SceneName <-left- I_SceneLoadNoticable
+
+@enduml
