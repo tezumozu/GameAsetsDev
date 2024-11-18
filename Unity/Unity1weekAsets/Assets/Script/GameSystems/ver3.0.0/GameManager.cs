@@ -15,11 +15,9 @@ namespace My1WeekGameSystems_ver3{
         protected T currentState;
 
         protected Subject<T> UpdateStateSubject;
-        protected Subject<bool> PauseSubject;
         protected Subject<E_SceneName> SceneLoadSubject;
 
         public IObservable<T> UpdateStateAsync { get {return UpdateStateSubject;} }
-        public IObservable<bool> PauseAsync { get {return PauseSubject;} }
         public IObservable<E_SceneName> SceneLoadAsync { get {return SceneLoadSubject;} } 
 
 
@@ -29,7 +27,6 @@ namespace My1WeekGameSystems_ver3{
             currentState = initState;
 
             UpdateStateSubject = new Subject<T>();
-            PauseSubject = new Subject<bool>();
             SceneLoadSubject = new Subject<E_SceneName>();
 
         }

@@ -27,11 +27,16 @@ namespace My1WeekGameSystems_ver3{
         [SerializeField]
         AudioClip desitionSE;
 
+        [SerializeField]
+        AudioClip TestBGM;
+
         //サウンド設定の初期値
         private static S_SoundOptionData SoundOptionData = new S_SoundOptionData(1.0f , 0.5f , 0.5f);
 
         private Subject<S_SoundOptionData> UpdateOptionSubject = new Subject<S_SoundOptionData>();
         public IObservable<S_SoundOptionData> UpdateOptionAsync => UpdateOptionSubject;
+
+        private bool isPlayTestBGM = false;
 
         public static S_SoundOptionData GetSoundOptionData{
             get{return SoundOptionData;}
@@ -59,5 +64,15 @@ namespace My1WeekGameSystems_ver3{
             UpdateOptionSubject.OnNext(SoundOptionData);
             soundPlayer.PlaySE(desitionSE);
         }
+
+        public void PlayTestBGM(){
+            isPlayTestBGM = !isPlayTestBGM;
+            
+            if(isPlayTestBGM){
+                soundPlayer.PlayBGM(TestBGM);
+            }else{
+                soundPlayer.StopSound();
+            }
+        } 
     }
 }

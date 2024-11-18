@@ -4,6 +4,6 @@ using UnityEngine;
 
 using My1WeekGameSystems_ver3;
 
-public class SamplePauseUIManager : PauseUIManager<E_SampleSceneState>{
+public class SamplePauseUIManager : PauseUIManager{
 
 }

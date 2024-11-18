@@ -34,6 +34,8 @@ public class SampleGameManagerInstaller : MonoInstaller{
             .Bind<I_ObjectUpdatable>()
             .To<SampleObjectUpdater>()
             .AsSingle();
+
+        
         
     }
 }
