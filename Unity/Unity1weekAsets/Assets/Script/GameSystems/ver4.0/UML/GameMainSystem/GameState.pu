@@ -1,0 +1,32 @@
+@startuml GameStateClass
+
+    abstract class GameState<T> << Where T : Enum>> {
+        # Subject<T> finishStateSubject
+        + IObservable<T> FinishStateAsync { get; }
+
+        # List<IDisposable> disposableList
+
+        + abstract IEnumerator UpdateState()
+        + virtual void Dispose()
+    }
+
+    interface IDisposable{
+        + void Dispose()
+    }
+
+    abstract class SceneGameManager<T>{
+        - Dictionary< T , GameState<T> > StateDic
+    }
+
+    Enum E_SceneState{
+        StateA
+        StateB
+        StateC
+    }
+
+    GameState -up-|> IDisposable
+    SceneGameManager "1" *-right-> "1..*" GameState : Observe
+    GameState -left-> E_SceneState
+    SceneGameManager --> E_SceneState
+
+@enduml 

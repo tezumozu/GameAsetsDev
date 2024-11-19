@@ -6,7 +6,7 @@ using UnityEngine;
 using UniRx;
 using Zenject;
 
-namespace Unity1Week_Main_GameSystem_v4{
+namespace Unity1Week_MainGameSystem_v4{
 
     /// <summary>
     /// 非MonoBehaviourでも非同期処理（コルーチン）を実現するためのクラス
@@ -67,7 +67,7 @@ namespace Unity1Week_Main_GameSystem_v4{
 
         /// <summary>
         /// コルーチンを受け取って開始する、
-        /// すでに開始したコルーチンを受け取った場合、何もせずリターン、
+        /// すでに開始したコルーチンを受け取った場合何もしない、
         /// 停止しているコルーチンを受け取った場合再開する
         /// </summary>
         /// <param name="coroutine">開始するコルーチン</param>
@@ -94,14 +94,29 @@ namespace Unity1Week_Main_GameSystem_v4{
             
             //コルーチンをリストに登録する
             checkerCoroutineDic.Add( coroutine , checkerCoroutine );
-            activeCoroutineDic.Add( coroutine , true );
+        }
+
+        /// <summary>
+        /// コルーチンのリストを受け取って全てのコルーチンを登録し開始する、
+        /// すでに開始したコルーチンを受け取った場合何もしない、
+        /// 停止しているコルーチンを受け取った場合再開する
+        /// </summary>
+        /// <param name="coroutineList"></param>
+        public static void OrderStartCoroutine(List<IEnumerator> coroutineList){
+
+            //各要素に対し、OrderStartCoroutineを呼び出す
+            foreach( var coroutine in coroutineList ){
+                OrderStartCoroutine(coroutine);
+            }
+
         }
 
 
 
+
         /// <summary>
-        /// コルーチンを停止する
-        /// すでにコルーチンが停止していたら何もしない
+        /// コルーチンを停止する、
+        /// すでにコルーチンが停止していたら何もしない、
         /// コルーチンが登録されていなければ何もしない
         /// </summary>
         /// <param name="coroutine">停止するコルーチン</param>
@@ -109,13 +124,13 @@ namespace Unity1Week_Main_GameSystem_v4{
             
             //コルーチンが登録されていない場合リターン
             if(!activeCoroutineDic.ContainsKey(coroutine)){
-                Debug.Log( " CoroutineHandler : Not Registration Coroutine ! " );
+                Debug.Log( " CoroutineHandler : Coroutine is Not Registration ! " );
                 return;
             }
             
-            //コルーチンが停止していたらリターン
+            //コルーチンがすでに停止していたらリターン
             if(!activeCoroutineDic[coroutine]){
-                Debug.Log( " CoroutineHandler : This Coroutine is Already Active! " );
+                Debug.Log( " CoroutineHandler : This Coroutine is Already Stop! " );
                 return;
             }
             
@@ -124,30 +139,61 @@ namespace Unity1Week_Main_GameSystem_v4{
 
         }
 
+        /// <summary>
+        /// コルーチンのリストを受け取り、すべてのコルーチンを停止する、
+        /// コルーチンがすでに停止していたら何もしない、
+        /// 登録されていないコルーチンに対しては何もしない
+        /// </summary>
+        /// <param name="coroutineList">停止するコルーチンのリスト</param>
+        public static void OrderStopCoroutine(List<IEnumerator> coroutineList){
+            
+            //各要素に対し、OrderStopCoroutineを呼び出す
+            foreach( var coroutine in coroutineList ){
+                OrderStopCoroutine(coroutine);
+            }
+
+        }
+
 
 
         /// <summary>
         /// 受け取ったコルーチンを完全に停止する
         /// </summary>
-        /// <param name="coroutine">停止するコルーチン</param>
+        /// <param name="coroutine">破棄するコルーチン</param>
         public static void OrderKillCoroutine(IEnumerator coroutine){
 
             //コルーチンが登録されていない場合リターン
             if(!activeCoroutineDic.ContainsKey(coroutine)){
-                Debug.Log( " CoroutineHandler : Not Registration Coroutine ! " );
+                Debug.Log( " CoroutineHandler : Coroutine is Not Registration ! " );
                 return;
             }
             
             //コルーチンがアクティブなら停止
             if(activeCoroutineDic[coroutine]){
                 instance.StopCoroutine(coroutine);
-                instance.StopCoroutine(checkerCoroutineDic[coroutine]);
                 return;
             }
+
+            //監視用のコルーチンを停止する
+            instance.StopCoroutine(checkerCoroutineDic[coroutine]);
 
             //終了したので辞書から削除
             activeCoroutineDic.Remove(coroutine);
             checkerCoroutineDic.Remove(coroutine);
+
+        }
+
+        /// <summary>
+        /// コルーチンのリストを受け取り、受け取ったコルーチンを破棄する、
+        /// 登録されていないコルーチンに対しては何もしない
+        /// </summary>
+        /// <param name="coroutineList">破棄するコルーチンのリスト</param>
+        public static void OrderKillCoroutine(List<IEnumerator> coroutineList){
+
+           //各要素に対し、OrderKillCoroutineを呼び出す
+            foreach( var coroutine in coroutineList ){
+                OrderKillCoroutine(coroutine);
+            }
 
         }
 
@@ -161,9 +207,10 @@ namespace Unity1Week_Main_GameSystem_v4{
         private static IEnumerator CheckFinishCoroutine(IEnumerator coroutine){
 
             //呼び出し元から受け取ったコルーチンを開始する
+            activeCoroutineDic.Add( coroutine , true );
             var activeCoroutine = instance.StartCoroutine(coroutine);
             
-            //同じフレーム内で辞書の追加と削除を同時に行わないようにする
+            //同じフレーム内で辞書の追加と削除を同時に行わないように1フレーム遅延
             yield return null ;
 
             //呼び出し元のコルーチンの終了を待つ
@@ -172,6 +219,7 @@ namespace Unity1Week_Main_GameSystem_v4{
             //終了したので辞書から削除
             activeCoroutineDic.Remove(coroutine);
             checkerCoroutineDic.Remove(coroutine);
+
         }
 
 
@@ -185,8 +233,28 @@ namespace Unity1Week_Main_GameSystem_v4{
         /// ture：登録されている＝終了していない
         /// false：登録されていない＝コルーチンの終了
         /// </returns>
-        public static bool isFinishCoroutine(IEnumerator coroutine){
-            return !activeCoroutineDic.ContainsKey(coroutine);
+        public static bool isRegistrationCoroutine(IEnumerator coroutine){
+            return activeCoroutineDic.ContainsKey(coroutine);
+        }
+
+        /// <summary>
+        /// 受け取ったコルーチンのリストが登録されているか
+        /// ＝コルーチンが全て終了しているか成否を返す。
+        /// </summary>
+        /// <param name="coroutineList">対象のコルーチン</param>
+        /// <returns> 
+        /// ture：登録されている＝終了していない
+        /// false：登録されていない＝コルーチンの終了
+        /// </returns>
+        public static bool isRegistrationCoroutine(List<IEnumerator> coroutineList){
+
+            foreach(var coroutine in coroutineList){
+                if(activeCoroutineDic.ContainsKey(coroutine)){
+                    return true;
+                }
+            }
+            
+            return false;
         }
 
     }

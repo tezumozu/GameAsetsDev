@@ -5,7 +5,7 @@ using UnityEngine;
 
 using UniRx;
 
-namespace Unity1Week_Main_GameSystem_v4{
+namespace Unity1Week_MainGameSystem_v4{
     public interface I_SceneLoadNoticable{
         public IObservable<E_SceneName> SceneLoadAsync { get; }
     }

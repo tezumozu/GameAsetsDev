@@ -1,0 +1,31 @@
+@startuml GameLoopManager
+    class GameLoopManager <<MonoBehaviour>>{}
+
+    abstract class SceneGameManager<T>{
+        - Dictionary< T , GameState<T> > StateDic
+    }
+
+    class SceneLoadingManager{
+
+    }
+
+    class SampleLoadUIManager <<MonoBehaviour>>{
+
+    }
+
+    interface I_LoadingUIUpdatable{
+        + void StartLoadingAnim()
+        + void UpdateProgress(float progress)
+    }
+
+    interface I_SceneLoadNoticable{
+        + IObservable<E_SceneName> SceneLoadAsync { get; }
+    }
+
+    interface I_GameManagable{
+        + void StartGame()
+        + void DisposManager()
+    }
+
+    SampleLoadUIManager --|> I_LoadingUIUpdatable
+@enduml

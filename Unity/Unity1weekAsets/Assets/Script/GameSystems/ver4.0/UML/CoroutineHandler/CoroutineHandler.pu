@@ -13,7 +13,12 @@ class CoroutineHandler {
     + static void OrderStartCoroutine ( IEnumerator coroutine )
     + static void OrderStopCoroutine ( IEnumerator coroutine )
     + static void OrderKillCoroutine ( IEnumerator coroutine )
-    + static bool isFinishCoroutine ( IEnumerator coroutine )
+    + static bool isRegistrationCoroutine ( IEnumerator coroutine )
+
+    + static void OrderStartCoroutine ( List<IEnumerator> coroutine )
+    + static void OrderStopCoroutine ( List<IEnumerator> coroutine )
+    + static void OrderKillCoroutine ( List<IEnumerator> coroutine )
+    + static bool isRegistrationCoroutine ( List<IEnumerator> coroutine )
 
 }
 
@@ -27,9 +32,14 @@ enum E_SceneName{
     Sample
 }
 
+abstract class SceneGameManager<T>{
+    - Dictionary< T , GameState<T> > StateDic
+}
 
-CoroutineHandler --> I_SceneLoadNoticable
+
+CoroutineHandler "1" --> "1" I_SceneLoadNoticable : Observe
 E_SceneName <-left- CoroutineHandler
 E_SceneName <-left- I_SceneLoadNoticable
+SceneGameManager -right-|> I_SceneLoadNoticable
 
 @enduml
