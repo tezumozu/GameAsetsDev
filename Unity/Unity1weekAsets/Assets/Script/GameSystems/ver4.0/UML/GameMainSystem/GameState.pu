@@ -3,6 +3,8 @@
     abstract class GameState<T> << Where T : Enum>> {
         # Subject<T> finishStateSubject
         + IObservable<T> FinishStateAsync { get; }
+        # static Subject<T> finishGameSubject
+        + static IObservable<T> FinishGameAsync { get; }
 
         # List<IDisposable> disposableList
 
@@ -15,8 +17,19 @@
     }
 
     abstract class SceneGameManager<T>{
-        - Dictionary< T , GameState<T> > StateDic
+        # T currentState
+        # Dictionary< T , GameState<T> > StateDic
+        # Subject<E_SceneName> SceneLoadSubject
+        + IObservable<E_SceneName> SceneLoadAsync { get; }
+
+        + SceneGameManager()
+
+        + abstract IEnumerator InitGame()
+        + abstract IEnumerator StartGame()
+        + abstract void ReleaseObject()
     }
+
+    class SampleGameManager
 
     Enum E_SceneState{
         StateA
@@ -25,8 +38,9 @@
     }
 
     GameState -up-|> IDisposable
-    SceneGameManager "1" *-right-> "1..*" GameState : Observe
-    GameState -left-> E_SceneState
+    SampleGameManager "1" *--> "1..*" GameState : Observe
+    SampleGameManager --|> SceneGameManager
+    GameState --> E_SceneState
     SceneGameManager --> E_SceneState
 
 @enduml 

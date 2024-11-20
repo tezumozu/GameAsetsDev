@@ -1,0 +1,70 @@
+@startuml GameLoopManager
+
+
+    abstract GameLoopManager <T> <<where T : Enum>><<MonoBehaviour>>{
+        [SerializeField]
+        - int GameFrameLate = 60;
+
+        - bool isHaveToLoading;
+        - SceneLoadingManager loadingManager
+        - List<IDisposable> disposeList
+        - SceneGameManager<T> gameManager
+        - static bool isFirst
+
+        - void Start()
+        - IEnumerator GameUpdate()
+        - void InjectObject(SceneGameManager<T> gameManager , SceneLoadingManager loadingManager)
+        - void activeIsHaveToLoading(E_SceneName sceneName)
+        # abstract void InitManager()
+    }
+
+    abstract class SceneGameManager<T>{
+        # T currentState
+        # Dictionary< T , GameState<T> > StateDic
+        # Subject<E_SceneName> SceneLoadSubject
+        + IObservable<E_SceneName> SceneLoadAsync { get; }
+
+        + SceneGameManager()
+
+        + abstract IEnumerator InitGame()
+        + abstract IEnumerator StartGame()
+        + abstract void ReleaseObject()
+    }
+
+    class SceneLoadingManager{
+        - AsyncOperation asyncLoad
+        - I_LoadingUIUpdatable loadingUI
+        - float currentTime
+        - readonly float loadingDilay
+        + E_SceneName NextScene
+
+        + SceneLoadingManager(I_LoadingUIUpdatable loadingUI)
+        + IEnumerator LoadScene()
+    }
+
+    class SampleLoadUIManager <<MonoBehaviour>>{
+        + void StartLoadingAnim()
+        + void UpdateProgress(float progress)
+    }
+
+    interface I_LoadingUIUpdatable{
+        + void StartLoadingAnim()
+        + void UpdateProgress(float progress)
+    }
+
+    interface I_SceneLoadNoticable{
+        + IObservable<E_SceneName> SceneLoadAsync { get; }
+    }
+
+
+
+    GameLoopManager "1" o-right-> "1" SceneGameManager
+    GameLoopManager "1" o-up-> "1" SceneLoadingManager
+
+    SceneGameManager --|> I_SceneLoadNoticable
+
+    SampleLoadUIManager --|> I_LoadingUIUpdatable
+    SceneLoadingManager "1" o-right-> "1" I_LoadingUIUpdatable
+
+
+@enduml

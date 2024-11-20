@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7819068766376430975}
-  - component: {fileID: 8752174971729868537}
+  - component: {fileID: 8425736345282942676}
   m_Layer: 0
   m_Name: CoroutineHander
   m_TagString: Untagged
@@ -32,7 +32,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8752174971729868537
+--- !u!114 &8425736345282942676
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -41,6 +41,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 3120585039442057857}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: af2a460e63babb141b882ef4abafd5db, type: 3}
+  m_Script: {fileID: 11500000, guid: 859565d417b615945a5171f72ba83b83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

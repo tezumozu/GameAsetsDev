@@ -33,7 +33,16 @@ enum E_SceneName{
 }
 
 abstract class SceneGameManager<T>{
-    - Dictionary< T , GameState<T> > StateDic
+    # T currentState
+    # Dictionary< T , GameState<T> > StateDic
+    # Subject<E_SceneName> SceneLoadSubject
+    + IObservable<E_SceneName> SceneLoadAsync { get; }
+
+    + SceneGameManager()
+
+    + abstract IEnumerator InitGame()
+    + abstract IEnumerator StartGame()
+    + abstract void ReleaseObject()
 }
 
 

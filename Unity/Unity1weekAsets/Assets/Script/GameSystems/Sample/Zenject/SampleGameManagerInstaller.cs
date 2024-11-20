@@ -1,9 +1,12 @@
 using UnityEngine;
 using Zenject;
 
-using My1WeekGameSystems_ver3;
+using Unity1Week_MainGameSystem_v4;
 
 public class SampleGameManagerInstaller : MonoInstaller{
+
+    
+
     public override void InstallBindings(){
         var gameManager = new SampleGameManager();
 
@@ -14,28 +17,9 @@ public class SampleGameManagerInstaller : MonoInstaller{
             .FromInstance(gameManager);	
 
         Container
-            .Bind<I_GameStateUpdatable<E_SampleSceneState>>()
+            .Bind<SceneGameManager<E_SampleSceneState>>()
             .To<SampleGameManager>()
             .FromInstance(gameManager);
 
-        Container
-            .Bind<GameManager<E_SampleSceneState>>()
-            .To<SampleGameManager>()
-            .FromInstance(gameManager);
-
-        Container
-            .Bind<I_Pausable>()
-            .To<SampleGameManager>()
-            .FromInstance(gameManager);
-
-
-        //ObjectUpdater
-        Container
-            .Bind<I_ObjectUpdatable>()
-            .To<SampleObjectUpdater>()
-            .AsSingle();
-
-        
-        
     }
 }

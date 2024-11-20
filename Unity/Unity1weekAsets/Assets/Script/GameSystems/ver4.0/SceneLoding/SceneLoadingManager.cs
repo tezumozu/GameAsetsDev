@@ -13,50 +13,39 @@ namespace Unity1Week_MainGameSystem_v4{
     public class SceneLoadingManager {
 
         private AsyncOperation asyncLoad;
-        private I_LoadingUIUpdatable loadingUI;
-        private float currentTime;
-        private readonly float loadingDilay = 1.0f;
+        public E_SceneName NextScene;
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
         /// <param name="loadingUI">ロード時に表示するUIを管理するクラス</param>
-        public SceneLoadingManager(I_LoadingUIUpdatable loadingUI){
-            this.loadingUI = loadingUI;
-
-            this.loadingUI.UpdateProgress(0.0f);
-            currentTime = 0;
+        public SceneLoadingManager(){
+            NextScene = E_SceneName.SampleScene;
         }
 
 
         /// <summary>
         /// シーンを読み込むコルーチン
         /// </summary>
-        /// <param name="sceneName">読み込むシーンを示したEnum</param>
         /// <returns>コルーチン</returns>
-        public IEnumerator LoadScene(E_SceneName sceneName){
-
-            //ローディングアニメーションの開始
-            loadingUI.StartLoadingAnim();
+        public IEnumerator LoadScene(){
 
             //シーン名を文字列へ変換
-            string str = Enum.GetName(typeof(E_SceneName),sceneName);
+            string str = Enum.GetName(typeof(E_SceneName),NextScene);
 
             //シーン読み込み開始
             asyncLoad = SceneManager.LoadSceneAsync(str);
 
             asyncLoad.allowSceneActivation = false;
 
-            //演出としてローディングの時間を一定時間確保する
-            while( asyncLoad.progress < 0.9f || currentTime < loadingDilay ){
-
-                currentTime += Time.deltaTime;
-                loadingUI.UpdateProgress(asyncLoad.progress * (currentTime / loadingDilay) + 0.1f);
+            //ローディング中は待機
+            while( asyncLoad.progress < 0.9f ){
                 yield return null;
             }
 
             asyncLoad.allowSceneActivation = true;
         }
+
     }
 
 }

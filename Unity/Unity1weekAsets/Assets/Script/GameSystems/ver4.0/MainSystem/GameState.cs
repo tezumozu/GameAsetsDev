@@ -25,11 +25,34 @@ namespace Unity1Week_MainGameSystem_v4{
         /// </summary>
         public IObservable<T> FinishStateAsync => finishStateSubject;
 
+
+        /// <summary>
+        /// ゲームが終了したことを通知するサブジェクト
+        /// </summary>
+        protected static Subject<Unit> finishGameSubject = new Subject<Unit>();
+
+        /// <summary>
+        /// 読み込み専用、ゲームが終了したことを通知するサブジェクト
+        /// </summary>
+        public static IObservable<Unit> FinishGameAsync => finishGameSubject;
+
+
         /// <summary>
         /// 購読しているSubjectのリスト
         /// </summary>
         protected List<IDisposable> disposableList = new List<IDisposable>();
 
+
+        /// <summary>
+        /// 状態の初期化処理
+        /// </summary>
+        /// <returns>コルーチン</returns>
+        public abstract IEnumerator InitState();
+
+        /// <summary>
+        /// 状態の処理
+        /// </summary>
+        /// <returns>コルーチン</returns>
         public abstract IEnumerator UpdateState();
 
 
