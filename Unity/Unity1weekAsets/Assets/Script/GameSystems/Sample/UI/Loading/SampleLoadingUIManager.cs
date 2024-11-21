@@ -7,13 +7,12 @@ using Unity1Week_MainGameSystem_v4;
 
 public class SampleLoadingUIManager : LoadingUIUpdater{
     [SerializeField]
-    Slider loadingSlider;
+    Animator LoadingAnim;
 
     private void Start(){
     }
 
     public override void UpdateProgress(float value){
-        loadingSlider.value = value;
     }
 
     public override void IsActiveLoadingUI(bool flag){
