@@ -12,9 +12,6 @@ public class SampleLoadingUIManager : LoadingUIUpdater{
     private void Start(){
     }
 
-    public override void UpdateProgress(float value){
-    }
-
     public override void IsActiveLoadingUI(bool flag){
         gameObject.SetActive(flag);
 

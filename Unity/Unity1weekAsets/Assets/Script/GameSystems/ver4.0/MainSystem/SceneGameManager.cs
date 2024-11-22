@@ -10,11 +10,29 @@ namespace Unity1Week_MainGameSystem_v4{
     public abstract class SceneGameManager<T> : I_SceneLoadNoticable 
     where T : Enum
     {
+        /// <summary>
+        /// 現在の状態を表すEnum
+        /// </summary>
         protected T currentState;
+        
+        /// <summary>
+        /// シーンが終了し、次のシーンの読み込みが必要になったことを通知するサブジェクト
+        /// </summary>
         protected Subject<E_SceneName> SceneLoadSubject;
+        
+        /// <summary>
+        /// 読み取り専用、次のシーンの読み込みが必要になったことを通知するサブジェクト
+        /// </summary>
         public IObservable<E_SceneName> SceneLoadAsync => SceneLoadSubject;
 
+        /// <summary>
+        /// ゲームの状態を整理するための辞書
+        /// </summary>
         protected Dictionary< T , GameState<T> > gameStateDic;
+
+        /// <summary>
+        /// 購読しているサブジェクトをまとめるリスト
+        /// </summary>
         protected List<IDisposable> disposableList;
 
 

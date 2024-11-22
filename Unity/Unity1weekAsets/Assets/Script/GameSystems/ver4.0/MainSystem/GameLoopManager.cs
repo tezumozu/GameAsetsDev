@@ -10,13 +10,11 @@ namespace Unity1Week_MainGameSystem_v4{
     public abstract class GameLoopManager<T> : MonoBehaviour 
     where T : Enum
     {
-
         [SerializeField]
         private int GameFrameLate = 60;
 
-        [SerializeReference]
-        LoadingUIUpdater loadingUI;
-
+        [SerializeField]
+        private LoadingUIUpdater loadingUI;
         private bool isHaveToLoading;
         private SceneLoadingManager sceneLoadingManager;
         private List<IDisposable> disposeList = new List<IDisposable>();
@@ -99,7 +97,7 @@ namespace Unity1Week_MainGameSystem_v4{
             //ローディングUIを非表示にする
             loadingUI.IsActiveLoadingUI(false);
 
-            //ゲームの開始
+            //シーンの開始
             var coroutine = gameManager.StartGame();
             StartCoroutine(coroutine);
 
@@ -108,6 +106,9 @@ namespace Unity1Week_MainGameSystem_v4{
                 yield return null;
                 
             }
+
+
+            //シーン終了
 
             //不要なオブジェクトを開放する
             gameManager.ReleaseObject();

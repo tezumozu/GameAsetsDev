@@ -13,6 +13,10 @@ namespace Unity1Week_MainGameSystem_v4{
     public class SceneLoadingManager {
 
         private AsyncOperation asyncLoad;
+        
+        /// <summary>
+        /// 次に読み込むシーンを表すフィールド
+        /// </summary>
         public E_SceneName NextScene;
 
         /// <summary>
