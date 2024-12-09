@@ -32,6 +32,7 @@ public class SampleGameManager : SceneGameManager<E_SampleSceneState>{
         gameStateDic[E_SampleSceneState.Result] = new SampleResultState();
 
         var initList = new List<IEnumerator>();
+
         foreach(var state in gameStateDic.Keys){
 
             //各状態の終了を購読する
@@ -44,7 +45,7 @@ public class SampleGameManager : SceneGameManager<E_SampleSceneState>{
 
             disposableList.Add(disposable);
 
-            //各状態の初期化処理をまとめる
+            //各状態の初期化処理をリストにまとめる
             var coroutine = gameStateDic[state].InitState();
             initList.Add(coroutine);
         }
@@ -64,7 +65,9 @@ public class SampleGameManager : SceneGameManager<E_SampleSceneState>{
 
         //最初のゲームの状態の処理を呼び出す
         var coroutine = gameStateDic[currentState].UpdateState();
+
         CoroutineHandler.OrderStartCoroutine(coroutine);
+
         yield return null;
     }
 
